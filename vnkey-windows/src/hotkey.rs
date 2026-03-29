@@ -71,16 +71,12 @@ fn toggle_display(hk: &HotkeySettings) -> String {
 pub fn register_hotkeys(hwnd: HWND) {
     if let Ok(hk) = HOTKEY_SETTINGS.lock() {
         unsafe {
-            if hk.toggle_vk != 0 || hk.toggle_mods != 0 {
-                if let Err(e) = RegisterHotKey(hwnd, HOTKEY_ID_TOGGLE,
-                    HOT_KEY_MODIFIERS(hk.toggle_mods), hk.toggle_vk) {
-                    eprintln!("[hotkey] RegisterHotKey toggle FAILED: {e} (vk={:#x}, mods={:#x}, hwnd={:?})",
-                        hk.toggle_vk, hk.toggle_mods, hwnd);
-                } else {
-                    eprintln!("[hotkey] RegisterHotKey toggle OK: vk={:#x}, mods={:#x}, hwnd={:?}",
-                        hk.toggle_vk, hk.toggle_mods, hwnd);
-                }
-            }
+            // Phím tắt toggle Việt/Anh: KHÔNG dùng RegisterHotKey vì
+            // WM_HOTKEY kích hoạt hidden window → mất focus ứng dụng đang soạn thảo.
+            // Thay vào đó, xử lý trực tiếp trong LL keyboard hook (hook.rs).
+
+            // Chỉ RegisterHotKey cho phím chuyển mã clipboard (không gây vấn đề focus
+            // vì clipboard convert không cần giữ focus ở ứng dụng nào).
             if hk.conv_vk != 0 {
                 if let Err(e) = RegisterHotKey(hwnd, HOTKEY_ID_CONVERT,
                     HOT_KEY_MODIFIERS(hk.conv_mods), hk.conv_vk) {
@@ -94,6 +90,8 @@ pub fn register_hotkeys(hwnd: HWND) {
 
 pub fn unregister_hotkeys(hwnd: HWND) {
     unsafe {
+        // Toggle hotkey không còn dùng RegisterHotKey (xử lý trong LL hook).
+        // Vẫn gọi Unregister phòng trường hợp phiên bản cũ đã đăng ký.
         let _ = UnregisterHotKey(hwnd, HOTKEY_ID_TOGGLE);
         let _ = UnregisterHotKey(hwnd, HOTKEY_ID_CONVERT);
     }

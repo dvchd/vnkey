@@ -138,6 +138,7 @@ unsafe extern "system" fn ll_keyboard_proc(
     let alt = GetAsyncKeyState(VK_MENU.0 as i32) as u16 & 0x8000 != 0;
     let win = GetAsyncKeyState(VK_LWIN.0 as i32) as u16 & 0x8000 != 0
            || GetAsyncKeyState(VK_RWIN.0 as i32) as u16 & 0x8000 != 0;
+    let shift = GetAsyncKeyState(VK_SHIFT.0 as i32) as u16 & 0x8000 != 0;
 
     // Ctrl+Shift: bật/tắt tiếng Việt (chỉ khi dùng toggle mặc định, không phải hotkey tùy chỉnh)
     // Hook cấp thấp nhận VK_LSHIFT (0xA0) hoặc VK_RSHIFT (0xA1), không phải VK_SHIFT (0x10)
@@ -157,6 +158,35 @@ unsafe extern "system" fn ll_keyboard_proc(
             }
         }
         return call_next(code, wparam, lparam);
+    }
+
+    // Phím tắt tùy chỉnh chuyển Việt/Anh: xử lý ngay trong hook để
+    // KHÔNG gây mất focus (RegisterHotKey sẽ kích hoạt hidden window).
+    if !crate::hotkey::is_toggle_builtin() {
+        if let Ok(hk) = crate::hotkey::HOTKEY_SETTINGS.try_lock() {
+            if hk.toggle_vk != 0 && kb.vkCode == hk.toggle_vk {
+                let need_ctrl = hk.toggle_mods & 2 != 0;
+                let need_alt = hk.toggle_mods & 1 != 0;
+                let need_shift = hk.toggle_mods & 4 != 0;
+                if ctrl == need_ctrl && alt == need_alt && shift == need_shift && !win {
+                    drop(hk);
+                    if let Ok(mut guard) = ENGINE.try_lock() {
+                        if let Some(state) = guard.as_mut() {
+                            state.toggle_viet_mode();
+                            let vm = state.viet_mode;
+                            drop(guard);
+                            JUST_TOGGLED.store(true, Ordering::Relaxed);
+                            let tid = MAIN_THREAD_ID.load(Ordering::Relaxed);
+                            let _ = PostThreadMessageW(tid, WM_VNKEY_UPDATE_ICON, WPARAM(vm as usize), LPARAM(0));
+                            crate::config::save();
+                            crate::osd::show(if vm { "Tiếng Việt" } else { "English" });
+                        }
+                    }
+                    // Chặn phím gốc để app đang focus không nhận (vd: Alt+Z không gõ 'z')
+                    return LRESULT(1);
+                }
+            }
+        }
     }
 
     // Nếu vừa toggle, phím thường đầu tiên xóa cờ.
