@@ -1530,10 +1530,14 @@ impl Engine {
                 || self.buf(self.current).key_code == b'W' as u32)
         {
             // ww → hoàn tác ư thành w (chỉ 1 ký tự w, không append thêm)
+            // Giữ nguyên case gốc: ư→w, Ư→W (không phụ thuộc phím thứ 2)
+            let original_caps = self.buf(self.current).caps;
             self.mark_change(self.current);
             self.buffer[self.current as usize].form = WordForm::NonVn;
             self.buffer[self.current as usize].vn_sym = VnLexiName::NonVnChar;
-            self.buffer[self.current as usize].key_code = b'w' as u32;
+            self.buffer[self.current as usize].key_code = if original_caps { b'W' as u32 } else { b'w' as u32 };
+            self.buffer[self.current as usize].v_offset = -1;
+            self.buffer[self.current as usize].tone = 0;
             self.single_mode = false;
             self.reverted = true;
             return true;
