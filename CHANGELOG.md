@@ -18,6 +18,7 @@
 - Trích xuất `build_backspace_inputs()` helper giảm code trùng lặp
 - Space dùng `soft_reset` thay vì `reset` để hỗ trợ backspace khôi phục dấu
 - Sửa phím tắt tùy chỉnh (Alt+Z, ...) gây mất focus khi đang soạn thảo — xử lý toggle trực tiếp trong LL hook thay vì RegisterHotKey
+- Thêm thông báo OSD (Tiếng Việt / English) khi chuyển chế độ bằng Ctrl+Shift mặc định
 - Cài đặt lại keyboard hook định kỳ (5s) phòng trường hợp Windows tự gỡ hook
 
 ### vnkey-fcitx5

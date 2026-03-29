@@ -155,6 +155,7 @@ unsafe extern "system" fn ll_keyboard_proc(
                 let tid = MAIN_THREAD_ID.load(Ordering::Relaxed);
                 let _ = PostThreadMessageW(tid, WM_VNKEY_UPDATE_ICON, WPARAM(vm as usize), LPARAM(0));
                 crate::config::save();
+                crate::osd::show(if vm { "Tiếng Việt" } else { "English" });
             }
         }
         return call_next(code, wparam, lparam);
