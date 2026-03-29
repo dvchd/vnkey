@@ -6,7 +6,6 @@ mod tests {
     /// Helper: feed a string of ASCII keys and return the UTF-8 output
     fn type_word(engine: &mut Engine, keys: &str) -> String {
         engine.reset();
-        let mut result = String::new();
         let mut total_output = Vec::<u8>::new();
 
         for ch in keys.bytes() {
@@ -28,8 +27,7 @@ mod tests {
                 total_output.push(ch);
             }
         }
-        result = String::from_utf8_lossy(&total_output).to_string();
-        result
+        String::from_utf8_lossy(&total_output).to_string()
     }
 
     #[test]
@@ -148,10 +146,54 @@ mod tests {
         let mut engine = Engine::new();
         engine.set_input_method(InputMethod::Telex);
 
-        // 'w' alone should produce 'w', not 'ư'
-        assert_eq!(type_word(&mut engine, "w"), "w");
-        // 'ww' should produce 'ww'
-        assert_eq!(type_word(&mut engine, "ww"), "ww");
+        // 'w' alone produces standalone 'ư'
+        assert_eq!(type_word(&mut engine, "w"), "ư");
+        // 'ww' undoes ư back to 'w'
+        assert_eq!(type_word(&mut engine, "ww"), "w");
+        // 'W' alone produces standalone 'Ư'
+        assert_eq!(type_word(&mut engine, "W"), "Ư");
+        // 'WW' undoes Ư back to 'W'
+        assert_eq!(type_word(&mut engine, "WW"), "W");
+
+        // Mixed-case undo: phải giữ case gốc, không phụ thuộc phím thứ 2
+        // ư (từ w) + W (undo) → w (giữ lowercase gốc)
+        assert_eq!(type_word(&mut engine, "wW"), "w");
+        // Ư (từ W) + w (undo) → W (giữ uppercase gốc)
+        assert_eq!(type_word(&mut engine, "Ww"), "W");
+    }
+
+    #[test]
+    fn test_telex_ww_then_continue_typing() {
+        let mut engine = Engine::new();
+        engine.set_input_method(InputMethod::Telex);
+
+        // Sau khi ww → w, gõ tiếp ký tự thường phải nối đúng
+        assert_eq!(type_word(&mut engine, "wwa"), "wa");
+        assert_eq!(type_word(&mut engine, "wwin"), "win");
+        assert_eq!(type_word(&mut engine, "wwe"), "we");
+
+        // Sau khi ww → w, gõ tiếp từ tiếng Việt mới
+        assert_eq!(type_word(&mut engine, "ww anw"), "w ăn");
+        assert_eq!(type_word(&mut engine, "ww dda"), "w đa");
+        assert_eq!(type_word(&mut engine, "ww ees"), "w ế");
+    }
+
+    #[test]
+    fn test_telex_w_consecutive() {
+        let mut engine = Engine::new();
+        engine.set_input_method(InputMethod::Telex);
+
+        // w lặp lại: ww undo về w, www = w + ư mới, wwww undo ww, ...
+        assert_eq!(type_word(&mut engine, "ww"), "w");
+        assert_eq!(type_word(&mut engine, "www"), "wư");
+        assert_eq!(type_word(&mut engine, "wwww"), "ww");
+        assert_eq!(type_word(&mut engine, "wwwww"), "wwư");
+        assert_eq!(type_word(&mut engine, "wwwwww"), "www");
+
+        // Tương tự với W hoa
+        assert_eq!(type_word(&mut engine, "WW"), "W");
+        assert_eq!(type_word(&mut engine, "WWW"), "WƯ");
+        assert_eq!(type_word(&mut engine, "WWWW"), "WW");
     }
 
     #[test]
