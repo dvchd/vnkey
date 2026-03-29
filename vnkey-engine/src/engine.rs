@@ -1529,13 +1529,12 @@ impl Engine {
             && (self.buf(self.current).key_code == b'w' as u32
                 || self.buf(self.current).key_code == b'W' as u32)
         {
-            // ww → hoàn tác ư thành w
+            // ww → hoàn tác ư thành w (chỉ 1 ký tự w, không append thêm)
             self.mark_change(self.current);
             self.buffer[self.current as usize].form = WordForm::NonVn;
             self.buffer[self.current as usize].vn_sym = VnLexiName::NonVnChar;
             self.buffer[self.current as usize].key_code = b'w' as u32;
             self.single_mode = false;
-            self.process_append(ev);
             self.reverted = true;
             return true;
         }
