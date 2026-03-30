@@ -150,6 +150,10 @@ mod tests {
         assert_eq!(type_word(&mut engine, "w"), "ư");
         // 'ww' undoes ư back to 'w'
         assert_eq!(type_word(&mut engine, "ww"), "w");
+        // 'W' alone produces standalone 'Ư'
+        assert_eq!(type_word(&mut engine, "W"), "Ư");
+        // 'WW' undoes Ư back to 'W'
+        assert_eq!(type_word(&mut engine, "WW"), "W");
     }
 
     #[test]

@@ -1533,7 +1533,7 @@ impl Engine {
             self.mark_change(self.current);
             self.buffer[self.current as usize].form = WordForm::NonVn;
             self.buffer[self.current as usize].vn_sym = VnLexiName::NonVnChar;
-            self.buffer[self.current as usize].key_code = b'w' as u32;
+            self.buffer[self.current as usize].key_code = ev.key_code;
             self.single_mode = false;
             self.reverted = true;
             return true;
