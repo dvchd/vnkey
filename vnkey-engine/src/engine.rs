@@ -98,6 +98,10 @@ pub struct Engine {
     saved_to_escape: bool,
     has_saved_state: bool,
 
+    /// Snapshot output UTF-8 trước process() để tính backspaces cho bảng mã đa byte
+    prev_output: Vec<u8>,
+    prev_change_start: usize,
+
     pub input: InputProcessor,
     pub options: Options,
     pub viet_key: bool,
@@ -123,6 +127,9 @@ impl Engine {
             saved_single_mode: false,
             saved_to_escape: false,
             has_saved_state: false,
+
+            prev_output: Vec::new(),
+            prev_change_start: 0,
 
             input: InputProcessor::new(),
             options: Options::default(),
@@ -216,6 +223,16 @@ impl Engine {
         self.backs = 0;
         self.change_pos = self.current + 1;
         self.reverted = false;
+
+        // Snapshot toàn bộ output hiện tại TRƯỚC khi dispatch modify buffer
+        // Dùng cho get_backspaces_for_multi_byte
+        {
+            let old_change_pos = self.change_pos;
+            self.change_pos = 0; // tạm thời cho write_output xuất toàn bộ
+            self.prev_output = self.write_output();
+            self.prev_change_start = (self.current + 1) as usize;
+            self.change_pos = old_change_pos; // phục hồi
+        }
 
         let ev = self.input.key_code_to_event(key_code);
 
@@ -434,8 +451,41 @@ impl Engine {
     fn get_seq_steps(&self, first: i32, last: i32) -> usize {
         if last < first { return 0; }
         // Với UTF-8, mỗi ký tự = 1 bước cho backspace
-        // Các bảng mã đa byte cần tính khác
+        // Các bảng mã đa byte cần tính khác (xem get_backspaces_for_multi_byte)
         (last - first + 1) as usize
+    }
+
+    /// Tính số backspaces cho bảng mã đa byte (VNI-Win, VNI-Mac, BKHCM2, VietWare-X).
+    /// Trong bảng mã đa byte, mỗi ký tự tiếng Việt = 2 byte, ASCII = 1 byte.
+    pub fn get_backspaces_for_multi_byte(&self) -> usize {
+        // self.backs = số buffer positions cần xóa
+        // prev_output chứa full output trước khi dispatch
+        // change_pos đã bị mark_change giảm, nhưng prev_change_start = vị trí ban đầu
+        // → chars cần xóa: prev_output[change_pos .. change_pos + backs]
+        // Tuy nhiên prev_output length = prev_change_start (snapshot lúc change_pos=prev_change_start)
+        // nên chars nằm ở prev_output[change_pos .. prev_change_start]
+        let prev_str = String::from_utf8_lossy(&self.prev_output);
+        let chars: Vec<char> = prev_str.chars().collect();
+
+        let start = self.change_pos as usize;
+        // Số chars cần xóa = prev_change_start - change_pos (vì đó là phần bị modify)
+        // Nhưng self.backs có thể khác (nếu undo hoặc insert thêm chars)
+        // Thực tế backs = prev_change_start - change_pos cho single-char modifications
+        let end = self.prev_change_start.min(chars.len());
+
+        if start >= end {
+            return self.backs; // fallback, không có chars cũ để tính
+        }
+
+        let mut count = 0;
+        for i in start..end {
+            if chars[i] as u32 > 127 {
+                count += 2; // ký tự tiếng Việt = 2 bytes trong VNI
+            } else {
+                count += 1; // ASCII = 1 byte
+            }
+        }
+        count
     }
 
     fn prepare_buffer(&mut self) {
