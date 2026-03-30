@@ -6,7 +6,6 @@ mod tests {
     /// Helper: feed a string of ASCII keys and return the UTF-8 output
     fn type_word(engine: &mut Engine, keys: &str) -> String {
         engine.reset();
-        let mut result = String::new();
         let mut total_output = Vec::<u8>::new();
 
         for ch in keys.bytes() {
@@ -28,8 +27,7 @@ mod tests {
                 total_output.push(ch);
             }
         }
-        result = String::from_utf8_lossy(&total_output).to_string();
-        result
+        String::from_utf8_lossy(&total_output).to_string()
     }
 
     #[test]
@@ -148,10 +146,10 @@ mod tests {
         let mut engine = Engine::new();
         engine.set_input_method(InputMethod::Telex);
 
-        // 'w' alone should produce 'w', not 'ư'
-        assert_eq!(type_word(&mut engine, "w"), "w");
-        // 'ww' should produce 'ww'
-        assert_eq!(type_word(&mut engine, "ww"), "ww");
+        // 'w' alone produces standalone 'ư'
+        assert_eq!(type_word(&mut engine, "w"), "ư");
+        // 'ww' undoes ư back to 'w'
+        assert_eq!(type_word(&mut engine, "ww"), "w");
     }
 
     #[test]
