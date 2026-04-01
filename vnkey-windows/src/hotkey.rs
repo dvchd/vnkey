@@ -167,9 +167,9 @@ fn js_code_to_vk(code: &str) -> u32 {
 
 // ── Tên bảng mã / kiểu gõ ────────────────────────────────────────────────
 
-const CS_IDS: [i32; 11] = [0, 1, 2, 3, 5, 10, 20, 21, 22, 40, 43];
-const CS_NAMES: [&str; 11] = ["Unicode","UTF-8","NCR Decimal","NCR Hex","CP-1258",
-    "VIQR","TCVN3 (ABC)","VPS","VISCII","VNI Windows","VNI Mac"];
+const CS_IDS: [i32; 12] = [0, 1, 2, 3, 5, 10, 20, 21, 22, 25, 40, 43];
+const CS_NAMES: [&str; 12] = ["Unicode","UTF-8","NCR Decimal","NCR Hex","CP-1258",
+    "VIQR","TCVN3 (ABC)","VPS","VISCII","VNU","VNI Windows","VNI Mac"];
 const IM_NAMES: [&str; 5] = ["Telex","Simple Telex","VNI","VIQR","MS Vietnamese"];
 
 fn custom_label(ch: &CustomHotkey) -> String {

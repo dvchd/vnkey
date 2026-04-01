@@ -29,10 +29,10 @@ pub static CONV_SETTINGS: LazyLock<Mutex<ConvSettings>> =
 
 static CONV_OPEN: AtomicBool = AtomicBool::new(false);
 
-const CS_IDS: [i32; 11] = [0, 1, 2, 3, 5, 10, 20, 21, 22, 40, 43];
-const CS_LABELS: [&str; 11] = [
+const CS_IDS: [i32; 12] = [0, 1, 2, 3, 5, 10, 20, 21, 22, 25, 40, 43];
+const CS_LABELS: [&str; 12] = [
     "Unicode", "UTF-8", "NCR Decimal", "NCR Hex", "CP-1258",
-    "VIQR", "TCVN3 (ABC)", "VPS", "VISCII", "VNI Windows", "VNI Mac",
+    "VIQR", "TCVN3 (ABC)", "VPS", "VISCII", "VNU", "VNI Windows", "VNI Mac",
 ];
 
 fn charset_from_id(id: i32) -> Charset {
@@ -41,7 +41,7 @@ fn charset_from_id(id: i32) -> Charset {
         2 => Charset::NcrDec, 3 => Charset::NcrHex,
         5 => Charset::WinCP1258, 10 => Charset::Viqr,
         20 => Charset::Tcvn3, 21 => Charset::Vps,
-        22 => Charset::Viscii, 40 => Charset::VniWin,
+        22 => Charset::Viscii, 25 => Charset::Isc, 40 => Charset::VniWin,
         43 => Charset::VniMac, _ => Charset::Unicode,
     }
 }

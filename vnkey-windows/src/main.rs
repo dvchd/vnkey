@@ -297,7 +297,7 @@ unsafe extern "system" fn wnd_proc(
                         config::save();
                         let cs_names = ["Unicode","UTF-8","NCR Decimal","NCR Hex","","CP-1258",
                             "","","","","VIQR","","","","","","","","","","TCVN3 (ABC)",
-                            "VPS","VISCII","","","","","","","","","","","","","","","","","","VNI Windows",
+                            "VPS","VISCII","","","VNU","","","","","","","","","","","","","","","VNI Windows",
                             "","","VNI Mac"];
                         let name = cs_names.get(ch.id as usize).unwrap_or(&"?");
                         osd::show(&format!("Bảng mã: {name}"));

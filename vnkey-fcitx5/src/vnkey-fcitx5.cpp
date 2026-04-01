@@ -179,6 +179,7 @@ static const CSDef CS_DEFS[] = {
     {23, "BK HCM 1"},
     {42, "Vietware X"},
     {24, "Vietware F"},
+    {25, "VNU"},
     {6,  "Unicode C String"},
 };
 static constexpr size_t CS_COUNT = sizeof(CS_DEFS) / sizeof(CS_DEFS[0]);

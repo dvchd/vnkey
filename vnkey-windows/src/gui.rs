@@ -105,7 +105,7 @@ fn build_html(im: i32, cs: i32, spell: bool, free: bool, modern: bool,
               auto_start: bool, run_admin: bool) -> String {
     let cs_idx = cs_index(cs);
     let cs_names = ["Unicode","UTF-8","NCR Decimal","NCR Hex","CP-1258",
-        "VIQR","TCVN3 (ABC)","VPS","VISCII","VNI Windows","VNI Mac"];
+        "VIQR","TCVN3 (ABC)","VPS","VISCII","VNU","VNI Windows","VNI Mac"];
     let cs_opts: String = cs_names.iter().enumerate().map(|(i, n)|
         if i == cs_idx { format!(r#"<option value="{i}" selected>{n}</option>"#) }
         else { format!(r#"<option value="{i}">{n}</option>"#) }

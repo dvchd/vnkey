@@ -570,6 +570,7 @@ static const struct { int id; const char *label; } CHARSETS[] = {
     {23, "BK HCM 1"},
     {42, "Vietware X"},
     {24, "Vietware F"},
+    {25, "VNU"},
     {6,  "Unicode C String"},
 };
 static const int CS_COUNT = sizeof(CHARSETS) / sizeof(CHARSETS[0]);

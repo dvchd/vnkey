@@ -5,7 +5,7 @@
 //! Hỗ trợ 19 bảng mã tiếng Việt:
 //! - Unicode: UCS-2, UTF-8, NCR decimal, NCR hex, decomposed, Windows CP-1258, C-string
 //! - Dạng văn bản: VIQR, UTF8-VIQR
-//! - Đơn byte: TCVN3, VPS, VISCII, BKHCM1, VietWare-F, ISC
+//! - Đơn byte: TCVN3, VPS, VISCII, BKHCM1, VietWare-F, VNU (ISC)
 //! - Đôi byte: VNI-Win, BKHCM2, VietWare-X, VNI-Mac
 
 mod data;
@@ -62,7 +62,7 @@ impl Charset {
             "VISCII" => Some(Charset::Viscii),
             "BKHCM1" | "BKHCM-1" => Some(Charset::Bkhcm1),
             "VIETWARE-F" | "VIETWAREF" => Some(Charset::VietwareF),
-            "ISC" => Some(Charset::Isc),
+            "ISC" | "VNU" => Some(Charset::Isc),
             "VNI-WIN" | "VNIWIN" | "VNI" => Some(Charset::VniWin),
             "BKHCM2" | "BKHCM-2" => Some(Charset::Bkhcm2),
             "VIETWARE-X" | "VIETWAREX" => Some(Charset::VietwareX),
@@ -87,7 +87,7 @@ impl Charset {
             Charset::Viscii => "VISCII",
             Charset::Bkhcm1 => "BKHCM1",
             Charset::VietwareF => "VIETWARE-F",
-            Charset::Isc => "ISC",
+            Charset::Isc => "VNU",
             Charset::VniWin => "VNI-WIN",
             Charset::Bkhcm2 => "BKHCM2",
             Charset::VietwareX => "VIETWARE-X",

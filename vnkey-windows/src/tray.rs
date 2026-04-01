@@ -36,6 +36,7 @@ const IDM_CS_VIQR: u16 = 260;
 const IDM_CS_TCVN3: u16 = 270;
 const IDM_CS_VPS: u16 = 271;
 const IDM_CS_VISCII: u16 = 272;
+const IDM_CS_VNU: u16 = 275;
 const IDM_CS_VNIWIN: u16 = 290;
 const IDM_CS_VNIMAC: u16 = 293;
 // Tùy chọn
@@ -231,7 +232,7 @@ fn show_context_menu(hwnd: HWND) {
 
         // -- Menu con bảng mã --
         let cs_sub = CreatePopupMenu().unwrap();
-        let cs_items: [(u16, i32, PCWSTR); 11] = [
+        let cs_items: [(u16, i32, PCWSTR); 12] = [
             (IDM_CS_UNICODE, 0, w!("Unicode")),
             (IDM_CS_UTF8, 1, w!("UTF-8")),
             (IDM_CS_NCRDEC, 2, w!("NCR Decimal")),
@@ -241,6 +242,7 @@ fn show_context_menu(hwnd: HWND) {
             (IDM_CS_TCVN3, 20, w!("TCVN3 (ABC)")),
             (IDM_CS_VPS, 21, w!("VPS")),
             (IDM_CS_VISCII, 22, w!("VISCII")),
+            (IDM_CS_VNU, 25, w!("VNU")),
             (IDM_CS_VNIWIN, 40, w!("VNI Windows")),
             (IDM_CS_VNIMAC, 43, w!("VNI Mac")),
         ];
@@ -374,6 +376,7 @@ pub fn handle_menu_command(hwnd: HWND, id: u16) {
         IDM_CS_TCVN3 => { state.output_charset = 20; drop(guard); crate::config::save(); }
         IDM_CS_VPS => { state.output_charset = 21; drop(guard); crate::config::save(); }
         IDM_CS_VISCII => { state.output_charset = 22; drop(guard); crate::config::save(); }
+        IDM_CS_VNU => { state.output_charset = 25; drop(guard); crate::config::save(); }
         IDM_CS_VNIWIN => { state.output_charset = 40; drop(guard); crate::config::save(); }
         IDM_CS_VNIMAC => { state.output_charset = 43; drop(guard); crate::config::save(); }
         // Tùy chọn

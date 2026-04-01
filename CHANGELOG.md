@@ -3,6 +3,7 @@
 ## 1.0.2 — 2026-04-01
 
 ### vnkey-engine
+- Hiện bảng mã VNU (ĐH Quốc Gia) trong giao diện — bảng mã ISC đã hỗ trợ trong engine, nay đổi tên hiển thị thành "VNU" và thêm vào tất cả menu/dropdown
 - Thêm module `app_charset`: hỗ trợ cấu hình bảng mã riêng theo từng ứng dụng (per-app charset override)
 - Thêm FFI: `vnkey_app_charset_from_json`, `vnkey_app_charset_to_json`, `vnkey_app_charset_update`, `vnkey_app_charset_get_current`
 - Thêm `backspaces_bytes` trong `ProcessResult` — tính số backspace theo byte cho bảng mã đa byte (VNI-Win, VNI-Mac, BKHCM2, VietWare-X)

@@ -61,7 +61,7 @@ int vnkey_engine_at_word_beginning(VnKeyEngine *engine);
 /* Chuyển UTF-8 sang bảng mã đích.
  * charset_id: 0=Unicode, 1=UTF-8, 2=NCR-DEC, 3=NCR-HEX, 4=UniDecomposed,
  *   5=CP1258, 6=UniCString, 10=VIQR, 11=UTF8VIQR, 20=TCVN3, 21=VPS,
- *   22=VISCII, 23=BKHCM1, 24=VietwareF, 25=ISC, 40=VNI-WIN, 41=BKHCM2,
+ *   22=VISCII, 23=BKHCM1, 24=VietwareF, 25=VNU (ISC), 40=VNI-WIN, 41=BKHCM2,
  *   42=VietwareX, 43=VNI-MAC
  * Trả 0 nếu thành công, -1 nếu lỗi. */
 int vnkey_charset_from_utf8(const uint8_t *input, size_t input_len,
