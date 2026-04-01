@@ -1,0 +1,46 @@
+name: Đề xuất tính năng / Feature Request
+description: Đề xuất tính năng mới cho VnKey
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Nền tảng liên quan
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - Linux (Fcitx5)
+        - Linux (IBus)
+        - Tất cả / All
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vấn đề bạn gặp phải
+      description: Mô tả vấn đề mà tính năng này sẽ giải quyết.
+      placeholder: "Mỗi khi tôi ..., tôi phải ... rất bất tiện."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Giải pháp mong muốn
+      description: Mô tả tính năng bạn muốn.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Các giải pháp thay thế đã xem xét
+      description: Bạn đã thử hoặc cân nhắc cách nào khác chưa?
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Thông tin thêm
+      description: Screenshot, mockup, link tham khảo, v.v.

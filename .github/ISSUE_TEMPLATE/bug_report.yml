@@ -1,0 +1,74 @@
+name: Báo lỗi / Bug Report
+description: Báo cáo lỗi để giúp cải thiện VnKey
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Nền tảng / Platform
+      options:
+        - Windows
+        - macOS
+        - Linux (Fcitx5)
+        - Linux (IBus)
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: Phiên bản OS
+      placeholder: "VD: Windows 11 24H2, macOS 15.3, Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: vnkey-version
+    attributes:
+      label: Phiên bản VnKey
+      placeholder: "VD: 1.0.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: input-method
+    attributes:
+      label: Kiểu gõ
+      options:
+        - Telex
+        - Simple Telex
+        - VNI
+        - VIQR
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Các bước tái hiện
+      placeholder: |
+        1. Mở ứng dụng X
+        2. Gõ "..."
+        3. Kết quả sai: "..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Kết quả mong đợi
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Kết quả thực tế
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Thông tin thêm
+      description: Screenshot, log, ứng dụng cụ thể bị ảnh hưởng, v.v.
