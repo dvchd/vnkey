@@ -66,19 +66,8 @@ jobs:
         run: |
           echo "${{ steps.virustotal.outputs.analysis }}" > vnkey-windows/target/release/virustotal.txt
 
-      - name: Package Windows ZIP
+      - name: Package Ede fonts
         run: |
-          $version = "${{ github.ref_name }}"
-          if (-not $version) { $version = "dev" }
-          $stagingDir = "vnkey-windows-$version"
-          New-Item -ItemType Directory -Path $stagingDir -Force
-          Copy-Item "vnkey-windows/target/release/vnkey.exe" "$stagingDir/"
-          if (Test-Path "vnkey-windows/target/release/virustotal.txt") {
-            Copy-Item "vnkey-windows/target/release/virustotal.txt" "$stagingDir/"
-          }
-          Compress-Archive -Path "$stagingDir/*" -DestinationPath "vnkey-windows-$version.zip"
-
-          # Ede fonts — file zip riêng, dùng chung cho multi-platform
           if (Test-Path "ede-fonts") {
             Compress-Archive -Path "ede-fonts/*" -DestinationPath "ede-fonts.zip"
           }
@@ -88,7 +77,14 @@ jobs:
         with:
           name: vnkey-windows
           path: |
-            vnkey-windows-*.zip
+            vnkey-windows/target/release/vnkey.exe
+
+      - name: Upload VirusTotal report
+        if: hashFiles('vnkey-windows/target/release/virustotal.txt') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: vnkey-windows-vt
+          path: vnkey-windows/target/release/virustotal.txt
 
       - name: Upload Ede fonts
         uses: actions/upload-artifact@v4
@@ -502,7 +498,8 @@ jobs:
       - name: Collect release files
         run: |
           mkdir release
-          cp artifacts/vnkey-windows/*.zip release/ || true
+          cp artifacts/vnkey-windows/vnkey.exe release/ || true
+          cp artifacts/vnkey-windows-vt/virustotal.txt release/ || true
           cp artifacts/vnkey-macos/VnKey.dmg release/ || true
           cp artifacts/vnkey-fcitx5-deb/*.deb release/ || true
           cp artifacts/vnkey-fcitx5-rpm/*.rpm release/ || true
