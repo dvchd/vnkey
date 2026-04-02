@@ -73,11 +73,15 @@ jobs:
           $stagingDir = "vnkey-windows-$version"
           New-Item -ItemType Directory -Path $stagingDir -Force
           Copy-Item "vnkey-windows/target/release/vnkey.exe" "$stagingDir/"
-          Copy-Item -Recurse "ede-fonts" "$stagingDir/ede-fonts"
           if (Test-Path "vnkey-windows/target/release/virustotal.txt") {
             Copy-Item "vnkey-windows/target/release/virustotal.txt" "$stagingDir/"
           }
           Compress-Archive -Path "$stagingDir/*" -DestinationPath "vnkey-windows-$version.zip"
+
+          # Ede fonts — file zip riêng, dùng chung cho multi-platform
+          if (Test-Path "ede-fonts") {
+            Compress-Archive -Path "ede-fonts/*" -DestinationPath "ede-fonts.zip"
+          }
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -85,6 +89,13 @@ jobs:
           name: vnkey-windows
           path: |
             vnkey-windows-*.zip
+
+      - name: Upload Ede fonts
+        uses: actions/upload-artifact@v4
+        if: hashFiles('ede-fonts.zip') != ''
+        with:
+          name: ede-fonts
+          path: ede-fonts.zip
 
   # ===== macOS (Universal: Intel + Apple Silicon) =====
   macos:
@@ -501,6 +512,7 @@ jobs:
           cp artifacts/vnkey-ibus-arch/*.pkg.tar.zst release/ || true
           cp artifacts/vnkey-fcitx5-nixos/*.tar.gz release/ || true
           cp artifacts/vnkey-ibus-nixos/*.tar.gz release/ || true
+          cp artifacts/ede-fonts/*.zip release/ || true
           ls -lh release/
 
       - name: Generate SHA256 checksums
