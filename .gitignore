@@ -23,3 +23,7 @@ Thumbs.db
 VNKEY/
 uvconv/
 x-unikey-1.0.4/
+vnkey-decompiled/
+parse_ede*.py
+*.docx
+~$*
