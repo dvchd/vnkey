@@ -66,13 +66,25 @@ jobs:
         run: |
           echo "${{ steps.virustotal.outputs.analysis }}" > vnkey-windows/target/release/virustotal.txt
 
+      - name: Package Windows ZIP
+        run: |
+          $version = "${{ github.ref_name }}"
+          if (-not $version) { $version = "dev" }
+          $stagingDir = "vnkey-windows-$version"
+          New-Item -ItemType Directory -Path $stagingDir -Force
+          Copy-Item "vnkey-windows/target/release/vnkey.exe" "$stagingDir/"
+          Copy-Item -Recurse "fonts" "$stagingDir/fonts"
+          if (Test-Path "vnkey-windows/target/release/virustotal.txt") {
+            Copy-Item "vnkey-windows/target/release/virustotal.txt" "$stagingDir/"
+          }
+          Compress-Archive -Path "$stagingDir/*" -DestinationPath "vnkey-windows-$version.zip"
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: vnkey-windows
           path: |
-            vnkey-windows/target/release/vnkey.exe
-            vnkey-windows/target/release/virustotal.txt
+            vnkey-windows-*.zip
 
   # ===== macOS (Universal: Intel + Apple Silicon) =====
   macos:
@@ -479,8 +491,7 @@ jobs:
       - name: Collect release files
         run: |
           mkdir release
-          cp artifacts/vnkey-windows/vnkey.exe release/
-          cp artifacts/vnkey-windows/virustotal.txt release/ 2>/dev/null || true
+          cp artifacts/vnkey-windows/*.zip release/ || true
           cp artifacts/vnkey-macos/VnKey.dmg release/ || true
           cp artifacts/vnkey-fcitx5-deb/*.deb release/ || true
           cp artifacts/vnkey-fcitx5-rpm/*.rpm release/ || true

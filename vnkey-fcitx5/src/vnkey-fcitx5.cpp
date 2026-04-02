@@ -516,9 +516,11 @@ void VnKeyState::activate() {
     vnkey_engine_reset(vnkeyEngine_);
     preedit_.clear();
 
+    /* Cập nhật charset override + phát hiện terminal */
+    auto prog = ic_->program();
+
     /* Phát hiện ứng dụng terminal để dùng preedit mode (atomic commit) */
     isTerminal_ = false;
-    auto prog = ic_->program();
     if (!prog.empty()) {
         isTerminal_ = isTerminalProgram(prog);
     }
@@ -526,8 +528,6 @@ void VnKeyState::activate() {
     fprintf(stderr, "[vnkey] activate: vietMode=1 engine=%p ic=%p terminal=%d prog=%s\n",
             (void*)vnkeyEngine_, (void*)ic_, isTerminal_, prog.c_str());
 
-    /* Cập nhật charset override theo app đang focus */
-    auto prog = ic_->program();
     if (!prog.empty()) {
         /* Lấy basename và chuyển lowercase */
         auto pos = prog.rfind('/');
